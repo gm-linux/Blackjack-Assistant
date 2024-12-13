@@ -3,34 +3,65 @@ const cardValues = {
     "J": 10, "Q": 10, "K": 10, "A": 11
 };
 
+// Initialize selected cards
+let playerHand = [];
+let dealerCard = null;
+
+// Generate card buttons
+function generateCardButtons(containerId, clickHandler) {
+    const container = document.getElementById(containerId);
+    Object.keys(cardValues).forEach(card => {
+        const button = document.createElement("button");
+        button.innerText = card;
+        button.addEventListener("click", () => clickHandler(card, button));
+        container.appendChild(button);
+    });
+}
+
+// Update player hand display
+function updatePlayerHandDisplay() {
+    document.getElementById("player-hand-display").innerText = 
+        `Selected Hand: ${playerHand.length > 0 ? playerHand.join(", ") : "None"}`;
+}
+
+// Update dealer card display
+function updateDealerCardDisplay() {
+    document.getElementById("dealer-card-display").innerText = 
+        `Selected Dealer Card: ${dealerCard || "None"}`;
+}
+
+// Handle player card selection
+function handlePlayerCardSelection(card, button) {
+    if (playerHand.includes(card)) {
+        playerHand = playerHand.filter(c => c !== card);
+        button.classList.remove("selected");
+    } else {
+        playerHand.push(card);
+        button.classList.add("selected");
+    }
+    updatePlayerHandDisplay();
+}
+
+// Handle dealer card selection
+function handleDealerCardSelection(card, button) {
+    const prevSelected = document.querySelector("#dealer-card-buttons button.selected");
+    if (prevSelected) prevSelected.classList.remove("selected");
+
+    dealerCard = card;
+    button.classList.add("selected");
+    updateDealerCardDisplay();
+}
+
+// Initialize deck composition
 function initializeDecks(numDecks) {
     const deck = {};
-    const ranks = Object.keys(cardValues);
-
-    ranks.forEach(rank => {
+    Object.keys(cardValues).forEach(rank => {
         deck[rank] = numDecks * 4; // 4 of each card per deck
     });
-
     return deck;
 }
 
-function calculateHandValue(cards) {
-    let total = 0;
-    let aces = 0;
-
-    cards.forEach(card => {
-        total += cardValues[card.toUpperCase()] || 0;
-        if (card.toUpperCase() === "A") aces++;
-    });
-
-    while (total > 21 && aces > 0) {
-        total -= 10; // Count Ace as 1 instead of 11
-        aces--;
-    }
-
-    return total;
-}
-
+// Adjust deck composition
 function adjustDeck(deck, cards) {
     cards.forEach(card => {
         const cardKey = card.toUpperCase();
@@ -40,6 +71,7 @@ function adjustDeck(deck, cards) {
     });
 }
 
+// Calculate odds
 function calculateOdds(deck) {
     const totalCards = Object.values(deck).reduce((sum, count) => sum + count, 0);
     const odds = {};
@@ -51,48 +83,38 @@ function calculateOdds(deck) {
     return odds;
 }
 
-function getAdvice(playerHand, dealerCard, numDecks) {
-    const playerValue = calculateHandValue(playerHand);
-    const dealerValue = cardValues[dealerCard.toUpperCase()] || 0;
+// Get advice
+function getAdvice(playerHand, dealerCard) {
+    const playerValue = playerHand.reduce((sum, card) => sum + cardValues[card], 0);
+    const dealerValue = cardValues[dealerCard];
 
     if (playerValue > 21) return "Bust! You lose.";
     if (playerValue === 21) return "Blackjack! Stand.";
-
-    if (playerHand.length === 2 && playerHand[0] === playerHand[1]) {
-        if (playerValue === 16 || playerValue === 14) return "Split.";
-    }
-
-    if (playerValue <= 11) return "Hit.";
     if (playerValue >= 17) return "Stand.";
-
-    if (playerValue >= 12 && playerValue <= 16) {
-        if (dealerValue >= 7) return "Hit.";
-        return "Stand.";
-    }
-
-    return "Error calculating advice.";
+    if (playerValue <= 11) return "Hit.";
+    if (playerValue >= 12 && dealerValue >= 7) return "Hit.";
+    return "Stand.";
 }
 
+// Button to calculate advice and odds
 document.getElementById("calculate-btn").addEventListener("click", () => {
-    const playerHandInput = document.getElementById("player-hand").value.split(",").map(card => card.trim());
-    const dealerCardInput = document.getElementById("dealer-card").value.trim();
     const numDecks = parseInt(document.getElementById("num-decks").value);
-
-    if (playerHandInput.length === 0 || !dealerCardInput || isNaN(numDecks)) {
-        document.getElementById("advice-output").innerText = "Please provide valid inputs.";
+    if (playerHand.length === 0 || !dealerCard) {
+        document.getElementById("advice-output").innerText = "Please select your cards.";
         return;
     }
 
-    // Initialize and adjust the deck
     const deck = initializeDecks(numDecks);
-    adjustDeck(deck, [...playerHandInput, dealerCardInput]);
+    adjustDeck(deck, [...playerHand, dealerCard]);
 
-    // Calculate advice
-    const advice = getAdvice(playerHandInput, dealerCardInput, numDecks);
-    document.getElementById("advice-output").innerText = advice;
-
-    // Calculate odds
+    const advice = getAdvice(playerHand, dealerCard);
     const odds = calculateOdds(deck);
+
+    document.getElementById("advice-output").innerText = `Advice: ${advice}`;
     const oddsOutput = Object.entries(odds).map(([card, percentage]) => `${card}: ${percentage}%`).join(", ");
-    document.getElementById("odds-output").innerText = `Odds of drawing each card: ${oddsOutput}`;
+    document.getElementById("odds-output").innerText = `Odds: ${oddsOutput}`;
 });
+
+// Initialize buttons
+generateCardButtons("player-hand-buttons", handlePlayerCardSelection);
+generateCardButtons("dealer-card-buttons", handleDealerCardSelection);

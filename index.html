@@ -8,16 +8,18 @@
 </head>
 <body>
     <h1>Blackjack Assistant</h1>
-    <p>Enter your cards and the dealer's card to get advice and odds based on the number of decks.</p>
+    <p>Click the buttons to select your cards and the dealer's card.</p>
     
-    <form id="blackjack-form">
-        <label for="player-hand">Your Hand (comma-separated, e.g., "A, 10"):</label><br>
-        <input type="text" id="player-hand" placeholder="Your cards"><br><br>
+    <div id="blackjack-form">
+        <h3>Your Hand:</h3>
+        <div id="player-hand-buttons" class="card-buttons"></div>
+        <p id="player-hand-display">Selected Hand: None</p>
+        
+        <h3>Dealer's Card:</h3>
+        <div id="dealer-card-buttons" class="card-buttons"></div>
+        <p id="dealer-card-display">Selected Dealer Card: None</p>
 
-        <label for="dealer-card">Dealer's Card:</label><br>
-        <input type="text" id="dealer-card" placeholder="Dealer's card"><br><br>
-
-        <label for="num-decks">Number of Decks:</label><br>
+        <h3>Number of Decks:</h3>
         <select id="num-decks">
             <option value="1">1 Deck</option>
             <option value="2">2 Decks</option>
@@ -28,13 +30,13 @@
         </select><br><br>
 
         <button type="button" id="calculate-btn">Calculate Advice</button>
-    </form>
+    </div>
 
     <h2>Advice:</h2>
-    <p id="advice-output">Enter the details above to see advice.</p>
+    <p id="advice-output">Select your cards above to see advice.</p>
 
     <h2>Odds:</h2>
-    <p id="odds-output">Select the number of decks and enter details to see odds.</p>
+    <p id="odds-output">Select your cards above to see odds.</p>
 
     <script src="script.js"></script>
 </body>

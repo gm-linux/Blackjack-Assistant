@@ -9,27 +9,30 @@ h1 {
     color: #333;
 }
 
-form {
-    margin: 20px auto;
-    display: inline-block;
-    text-align: left;
+.card-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 10px 0;
 }
 
-input, button, select {
-    padding: 10px;
-    margin: 5px 0;
-    width: 100%;
+.card-buttons button {
+    margin: 5px;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    cursor: pointer;
+    font-size: 14px;
 }
 
-button {
+.card-buttons button:hover {
+    background-color: #f0f0f0;
+}
+
+.card-buttons button.selected {
     background-color: #4CAF50;
     color: white;
-    border: none;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #45a049;
+    border-color: #45a049;
 }
 
 #advice-output, #odds-output {
