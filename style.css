@@ -15,7 +15,7 @@ form {
     text-align: left;
 }
 
-input, button {
+input, button, select {
     padding: 10px;
     margin: 5px 0;
     width: 100%;
@@ -32,7 +32,8 @@ button:hover {
     background-color: #45a049;
 }
 
-#advice-output {
+#advice-output, #odds-output {
     font-size: 1.2em;
     color: #444;
+    margin-top: 20px;
 }
