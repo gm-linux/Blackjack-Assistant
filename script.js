@@ -107,17 +107,51 @@ function calculateOdds(deck) {
     return odds;
 }
 
-// Get advice
+// Get advice, including Double Down and Split
 function getAdvice(playerHand, dealerCard) {
-    const playerValue = playerHand.reduce((sum, card) => sum + cardValues[card], 0);
+    const playerValue = calculateHandValue(playerHand);
     const dealerValue = cardValues[dealerCard];
 
+    // Check for split condition
+    if (playerHand.length === 2 && playerHand[0] === playerHand[1]) {
+        const splitCardValue = cardValues[playerHand[0]];
+        if (splitCardValue === 8 || splitCardValue === 11) {
+            return "Split.";
+        }
+    }
+
+    // Check for double down condition
+    if (playerValue === 9 || playerValue === 10 || playerValue === 11) {
+        if (dealerValue >= 2 && dealerValue <= 6) {
+            return "Double Down.";
+        }
+    }
+
+    // Standard advice logic
     if (playerValue > 21) return "Bust! You lose.";
     if (playerValue === 21) return "Blackjack! Stand.";
     if (playerValue >= 17) return "Stand.";
     if (playerValue <= 11) return "Hit.";
     if (playerValue >= 12 && dealerValue >= 7) return "Hit.";
     return "Stand.";
+}
+
+// Calculate player hand value
+function calculateHandValue(cards) {
+    let total = 0;
+    let aces = 0;
+
+    cards.forEach(card => {
+        total += cardValues[card.toUpperCase()] || 0;
+        if (card.toUpperCase() === "A") aces++;
+    });
+
+    while (total > 21 && aces > 0) {
+        total -= 10; // Count Ace as 1 instead of 11
+        aces--;
+    }
+
+    return total;
 }
 
 // Add event listener to update results on deck change
