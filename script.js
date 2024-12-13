@@ -42,6 +42,7 @@ function handlePlayerCardSelection(card, button) {
         button.classList.add("selected");
     }
     updatePlayerHandDisplay();
+    calculateAndDisplayResults();
 }
 
 // Handle dealer card selection
@@ -52,6 +53,27 @@ function handleDealerCardSelection(card, button) {
     dealerCard = card;
     button.classList.add("selected");
     updateDealerCardDisplay();
+    calculateAndDisplayResults();
+}
+
+// Calculate and display results (advice and odds)
+function calculateAndDisplayResults() {
+    const numDecks = parseInt(document.getElementById("num-decks").value);
+    if (playerHand.length === 0 || !dealerCard) {
+        document.getElementById("advice-output").innerText = "Please select your cards.";
+        document.getElementById("odds-output").innerText = "Select your cards above to see odds.";
+        return;
+    }
+
+    const deck = initializeDecks(numDecks);
+    adjustDeck(deck, [...playerHand, dealerCard]);
+
+    const advice = getAdvice(playerHand, dealerCard);
+    const odds = calculateOdds(deck);
+
+    document.getElementById("advice-output").innerText = `Advice: ${advice}`;
+    const oddsOutput = Object.entries(odds).map(([card, percentage]) => `${card}: ${percentage}%`).join(", ");
+    document.getElementById("odds-output").innerText = `Odds: ${oddsOutput}`;
 }
 
 // Initialize deck composition
@@ -98,24 +120,8 @@ function getAdvice(playerHand, dealerCard) {
     return "Stand.";
 }
 
-// Button to calculate advice and odds
-document.getElementById("calculate-btn").addEventListener("click", () => {
-    const numDecks = parseInt(document.getElementById("num-decks").value);
-    if (playerHand.length === 0 || !dealerCard) {
-        document.getElementById("advice-output").innerText = "Please select your cards.";
-        return;
-    }
-
-    const deck = initializeDecks(numDecks);
-    adjustDeck(deck, [...playerHand, dealerCard]);
-
-    const advice = getAdvice(playerHand, dealerCard);
-    const odds = calculateOdds(deck);
-
-    document.getElementById("advice-output").innerText = `Advice: ${advice}`;
-    const oddsOutput = Object.entries(odds).map(([card, percentage]) => `${card}: ${percentage}%`).join(", ");
-    document.getElementById("odds-output").innerText = `Odds: ${oddsOutput}`;
-});
+// Add event listener to update results on deck change
+document.getElementById("num-decks").addEventListener("change", calculateAndDisplayResults);
 
 // Initialize buttons
 generateCardButtons("player-hand-buttons", handlePlayerCardSelection);
