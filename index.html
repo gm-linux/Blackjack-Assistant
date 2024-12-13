@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack Assistant</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Blackjack Assistant</h1>
+    <p>Enter your cards and the dealer's card to get advice.</p>
+    
+    <form id="blackjack-form">
+        <label for="player-hand">Your Hand (comma-separated, e.g., "A, 10"):</label><br>
+        <input type="text" id="player-hand" placeholder="Your cards"><br><br>
+        
+        <label for="dealer-card">Dealer's Card:</label><br>
+        <input type="text" id="dealer-card" placeholder="Dealer's card"><br><br>
+        
+        <button type="button" id="calculate-btn">Calculate Advice</button>
+    </form>
+    
+    <h2>Advice:</h2>
+    <p id="advice-output">Enter the details above to see advice.</p>
+    
+    <script src="script.js"></script>
+</body>
+</html>
