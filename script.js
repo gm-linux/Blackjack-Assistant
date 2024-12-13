@@ -10,9 +10,11 @@ let dealerCard = null;
 // Generate card buttons
 function generateCardButtons(containerId, clickHandler) {
     const container = document.getElementById(containerId);
+    container.innerHTML = ""; // Clear container before adding buttons
     Object.keys(cardValues).forEach(card => {
         const button = document.createElement("button");
         button.innerText = card;
+        button.classList.add("card-button");
         button.addEventListener("click", () => clickHandler(card, button));
         container.appendChild(button);
     });
